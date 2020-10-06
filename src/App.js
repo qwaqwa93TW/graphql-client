@@ -73,24 +73,65 @@ class QueryPreview extends React.Component {
 
 }
 
-function QuerySelect() {
-  return (
-    <select> 
-    </select>
-  )
-}
 class QueryInput extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       queryType: null,
+      queryName: null,
     };
+    this.handleTypeChange = this.handleTypeChange.bind(this);
+    this.handleNameChange = this.handleNameChange.bind(this);
   }
+
+  handleTypeChange(e) {
+    this.setState({queryType: e.target.value})
+  }
+
+  handleNameChange(e) {
+    this.setState({queryName: e.target.value})
+  }
+
   render() {
     return (
       <div>
-        <QuerySelect />
-        {this.state.queryType && <QuerySelect />}
+        <li>
+        <select onChange={this.handleTypeChange} >
+          <option selected>Select query type</option>
+          <option value="query">Query</option>
+          <option value="mutation">Mutation</option>
+          <option value="subscription">Subscription</option>
+        </select>
+        {(this.state.queryType == "query") && 
+        <select onChange={this.handleNameChange} >
+          <option value="workspace">Workspace</option>
+          <option value="roadmap">Roadmap</option>
+          <option value="robot">Robot</option>
+          <option value="mission">Mission</option>
+        </select>}
+        {(this.state.queryType == "mutation") && 
+        <select onChange={this.handleNameChange} >
+          <option value="mission">Mission</option>
+          <option value="robot">Robot</option>
+          <option value="edge">Edge</option>
+          <option value="node">Node</option>
+        </select>}
+        {(this.state.queryType == "mutation") && 
+        <select onChange={this.handleNameChange} >
+          <option value="create">Create</option>
+          <option value="update">Update</option>
+          <option value="delete">Delete</option>
+          <option value="adfs">adf</option>
+        </select>}
+        {(this.state.queryType == "subscription") && 
+        <select onChange={this.handleNameChange} >
+          <option value="subscribeRobot">Robot</option>
+          <option value="subscribeMission">Mission</option>
+        </select>}
+      </li>
+      <li>
+        
+      </li>
       </div>
     );
   }
@@ -100,14 +141,8 @@ class QueryGenerator extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      queryType: null,
-      queryName: null,
       queryArguments: null,
     };
-  }
-  handleTypeChange = (e) => {
-    const querytype = this.state.queryType
-    return
   }
 
   updateData = (target, value) => {
@@ -125,7 +160,7 @@ class QueryGenerator extends React.Component {
             {true && <img src="rps-image-logo.jpg" width="400" height="200" opacity="0.2"/>}
           </div>
           <div class="query-input">
-            <QueryInput onChange={this.handleTypeChange}/>
+            <QueryInput />
           </div>
         </div>
         <div class="split right">
