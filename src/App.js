@@ -56,8 +56,22 @@ const client = new ApolloClient({
 });
 
 const argumentDict = {
+  updateRobot: ["robotID", "newName"],
+  createStationGroup: ["roadMapID", "name", "description (optional)"],
+  updateStationGroup: ["arg1", "arg2", "arg3"],
+  deleteStationGroup: ["arg1", "arg2", "arg3"],
+  addStationToStationGroup: ["arg1", "arg2", "arg3"],
+  removeStationFromStationGroup: ["arg1", "arg2", "arg3"],
   createMission: ["arg1", "arg2", "arg3"],
-  workspace: ["wo", "rk", "space"]
+  executeMission: ["arg1", "arg2", "arg3"],
+  pauseMission: ["arg1", "arg2", "arg3"],
+  resumeMission: ["arg1", "arg2", "arg3"],
+  cancelMission: ["arg1", "arg2", "arg3"],
+  terminateMission: ["arg1", "arg2", "arg3"],
+  subscribeMission: ["arg1", "arg2", "arg3"],
+  subscribeRobot: ["arg1", "arg2", "arg3"],
+  workspace: ["wo", "rk", "space"],
+  allWorkSpaces: [],
 }
 class QueryResponse extends React.Component {
   render() {
@@ -122,6 +136,7 @@ class QueryInput extends React.Component {
         <select onChange={this.handleNameChange} >
           <option selected disabled hidden></option>
           <option value="workspace">Workspace</option>
+          <option value="allWorkSpaces">AllWorkspaces</option>
           <option value="roadmap">Roadmap</option>
           <option value="robot">Robot</option>
           <option value="mission">Mission</option>
@@ -129,15 +144,12 @@ class QueryInput extends React.Component {
         {(this.state.queryType == "mutation") && 
         <select onChange={this.handleNameChange} >
         <option selected disabled hidden></option>
-          <option value="mission">Mission</option>
-          <option value="robot">Robot</option>
-          <option value="edge">Edge</option>
-          <option value="node">Node</option>
-        </select>}
-        {(this.state.queryType == "mutation") && 
-        <select onChange={this.handleNameChange} >
-        <option selected disabled hidden></option>
-          <option value="createMission">Create</option>
+          <option value="updateRobot">UpdateRobot</option>
+          <option value="createStationGroup">CreateStationGroup</option>
+          <option value="updateStationGroup">UpdateStationGroup</option>
+          <option value="deleteStationGroup">DeleteStationGroup</option>
+          <option value="addStationToStationGroup">AddStationToStationGroup</option>
+          <option value="createMission">CreateMission</option>
           <option value="update">Update</option>
           <option value="delete">Delete</option>
           <option value="adfs">adf</option>
@@ -150,6 +162,7 @@ class QueryInput extends React.Component {
         </select>}
       <div>Arguments</div>
       {this.getArguments(this.state.queryName).map(this.renderArgument) }
+      <button>button</button>
       </div>
     );
   }
