@@ -10,7 +10,7 @@ import {
   HttpLink,
   split
 } from '@apollo/client';
-import { getMainDefinition } from '@apollo/client/utilities';
+import { argumentsObjectFromField, getMainDefinition } from '@apollo/client/utilities';
 import { WebSocketLink } from '@apollo/client/link/ws';
 
 import { ApolloClient, InMemoryCache } from '@apollo/client';
@@ -58,19 +58,19 @@ const client = new ApolloClient({
 const argumentDict = {
   updateRobot: ["robotID", "newName"],
   createStationGroup: ["roadMapID", "name", "description (optional)"],
-  updateStationGroup: ["arg1", "arg2", "arg3"],
-  deleteStationGroup: ["arg1", "arg2", "arg3"],
-  addStationToStationGroup: ["arg1", "arg2", "arg3"],
-  removeStationFromStationGroup: ["arg1", "arg2", "arg3"],
-  createMission: ["arg1", "arg2", "arg3"],
-  executeMission: ["arg1", "arg2", "arg3"],
-  pauseMission: ["arg1", "arg2", "arg3"],
-  resumeMission: ["arg1", "arg2", "arg3"],
-  cancelMission: ["arg1", "arg2", "arg3"],
-  terminateMission: ["arg1", "arg2", "arg3"],
-  subscribeMission: ["arg1", "arg2", "arg3"],
-  subscribeRobot: ["arg1", "arg2", "arg3"],
-  workspace: ["wo", "rk", "space"],
+  updateStationGroup: ["stationGroupID", "newName (optional)", "description (optional)"],
+  deleteStationGroup: ["stationGroupID"],
+  addStationToStationGroup: ["stationGroupID", "stationID"],
+  removeStationFromStationGroup: ["stationGroupID", "stationID"],
+  createMission: ["roadMapID", "robotID", "stops (array)", "orderedStop"],
+  executeMission: ["missionID"],
+  pauseMission: ["missionID"],
+  resumeMission: ["missionID"],
+  cancelMission: ["missionID"],
+  terminateMission: ["missionID"],
+  subscribeMission: ["missionID"],
+  subscribeRobot: ["robotID"],
+  workspace: ["workspaceID"],
   allWorkSpaces: [],
 }
 class QueryResponse extends React.Component {
@@ -95,20 +95,7 @@ class QueryInput extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      queryType: null,
-      queryName: null,
     };
-    this.handleTypeChange = this.handleTypeChange.bind(this);
-    this.handleNameChange = this.handleNameChange.bind(this);
-  }
-
-
-  handleTypeChange(e) {
-    this.setState({queryType: e.target.value})
-  }
-
-  handleNameChange(e) {
-    this.setState({queryName: e.target.value})
   }
 
   getArguments(name) {
@@ -126,14 +113,14 @@ class QueryInput extends React.Component {
   render() {
     return (
       <div>
-        <select onChange={this.handleTypeChange} >
+        <select onChange={this.props.handleTypeChange} >
           <option selected disabled hidden></option>
           <option value="query">Query</option>
           <option value="mutation">Mutation</option>
           <option value="subscription">Subscription</option>
         </select>
-        {(this.state.queryType == "query") && 
-        <select onChange={this.handleNameChange} >
+        {(this.props.queryType == "query") && 
+        <select onChange={this.props.handleNameChange} >
           <option selected disabled hidden></option>
           <option value="workspace">Workspace</option>
           <option value="allWorkSpaces">AllWorkspaces</option>
@@ -141,8 +128,8 @@ class QueryInput extends React.Component {
           <option value="robot">Robot</option>
           <option value="mission">Mission</option>
         </select>}
-        {(this.state.queryType == "mutation") && 
-        <select onChange={this.handleNameChange} >
+        {(this.props.queryType == "mutation") && 
+        <select onChange={this.props.handleNameChange} >
         <option selected disabled hidden></option>
           <option value="updateRobot">UpdateRobot</option>
           <option value="createStationGroup">CreateStationGroup</option>
@@ -154,15 +141,15 @@ class QueryInput extends React.Component {
           <option value="delete">Delete</option>
           <option value="adfs">adf</option>
         </select>}
-        {(this.state.queryType == "subscription") && 
-        <select onChange={this.handleNameChange} >
+        {(this.props.queryType == "subscription") && 
+        <select onChange={this.props.handleNameChange} >
         <option selected disabled hidden></option>
           <option value="subscribeRobot">Robot</option>
           <option value="subscribeMission">Mission</option>
         </select>}
       <div>Arguments</div>
-      {this.getArguments(this.state.queryName).map(this.renderArgument) }
-      <button>button</button>
+      {this.getArguments(this.props.queryName).map(this.renderArgument) }
+      <button onClick={this.props.onClickHandle}>Query!</button>
       </div>
     );
   }
@@ -172,13 +159,24 @@ class QueryGenerator extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      queryArguments: null,
+      queryType: null,
+      queryName: null,
     };
+    this.handleTypeChange = this.handleTypeChange.bind(this);
+    this.handleNameChange = this.handleNameChange.bind(this);
   }
 
-  updateData = (target, value) => {
-    this.setState({ [target]: value });
-  };
+  handleQueryClick() {
+
+  }
+
+  handleTypeChange(e) {
+    this.setState({queryType: e.target.value})
+  }
+
+  handleNameChange(e) {
+    this.setState({queryName: e.target.value})
+  }
 
   render() {
     return (
@@ -191,7 +189,7 @@ class QueryGenerator extends React.Component {
             {true && <img src="rps-image-logo.jpg" width="400" height="200" opacity="0.2"/>}
           </div>
           <div class="query-input">
-            <QueryInput />
+            <QueryInput queryType={this.state.queryType} queryName={this.state.queryName} handleTypeChange={this.handleTypeChange} handleNameChange={this.handleNameChange} onClickHandle={this.handleQueryClick}/>
           </div>
         </div>
         <div class="split right">
