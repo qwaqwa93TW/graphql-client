@@ -85,7 +85,23 @@ class QueryResponse extends React.Component {
 class QueryPreview extends React.Component {
   render() {
     return (
-      <div>QueryPreview</div>
+      <div><p>QueryPreview</p>
+      </div>
+    );
+  }
+
+}
+class Subscription extends React.Component {
+  renderMission(missionID) {
+    return (
+      <li>MissionID: {missionID}</li>
+    )
+  }
+  render() {
+    return (
+      <div>
+        {this.props.subscribingMissions.map(this.renderMission)}
+      </div>
     );
   }
 
@@ -94,7 +110,7 @@ class QueryPreview extends React.Component {
 class QueryInput extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {
+    this.state = {  // 함수형으로 가능?
     };
   }
 
@@ -113,15 +129,16 @@ class QueryInput extends React.Component {
   render() {
     return (
       <div>
+        <p><input placeholder="endpoint URL"></input></p>
         <select onChange={this.props.handleTypeChange} >
-          <option selected disabled hidden></option>
+          <option class="default-select" selected disabled hidden>Select Query Type</option>
           <option value="query">Query</option>
           <option value="mutation">Mutation</option>
           <option value="subscription">Subscription</option>
         </select>
         {(this.props.queryType == "query") && 
         <select onChange={this.props.handleNameChange} >
-          <option selected disabled hidden></option>
+          <option selected disabled hidden>Select Query Name</option>
           <option value="workspace">Workspace</option>
           <option value="allWorkSpaces">AllWorkspaces</option>
           <option value="roadmap">Roadmap</option>
@@ -130,26 +147,28 @@ class QueryInput extends React.Component {
         </select>}
         {(this.props.queryType == "mutation") && 
         <select onChange={this.props.handleNameChange} >
-        <option selected disabled hidden></option>
+        <option selected disabled hidden>Select Query Name</option>
           <option value="updateRobot">UpdateRobot</option>
           <option value="createStationGroup">CreateStationGroup</option>
           <option value="updateStationGroup">UpdateStationGroup</option>
           <option value="deleteStationGroup">DeleteStationGroup</option>
           <option value="addStationToStationGroup">AddStationToStationGroup</option>
           <option value="createMission">CreateMission</option>
-          <option value="update">Update</option>
-          <option value="delete">Delete</option>
-          <option value="adfs">adf</option>
+          <option value="executeMission">ExecuteMission</option>
+          <option value="pauseMission">PauseMission</option>
+          <option value="resumeMission">ResumeMission</option>
+          <option value="cancelMission">CancelMission</option>
+          <option value="terminateMission">TerminateMission</option>
         </select>}
         {(this.props.queryType == "subscription") && 
         <select onChange={this.props.handleNameChange} >
-        <option selected disabled hidden></option>
+        <option selected disabled hidden>Select Query Name</option>
           <option value="subscribeRobot">Robot</option>
           <option value="subscribeMission">Mission</option>
         </select>}
       <div>Arguments</div>
-      {this.getArguments(this.props.queryName).map(this.renderArgument) }
-      <button onClick={this.props.onClickHandle}>Query!</button>
+      {this.props.getArguments(this.props.queryName).map(this.renderArgument) }
+      <button class="block" onClick={this.props.onClick}>Query!</button>
       </div>
     );
   }
@@ -161,21 +180,36 @@ class QueryGenerator extends React.Component {
     this.state = {
       queryType: null,
       queryName: null,
+      subscribingMissions: [],
     };
+    this.handleQueryClick = this.handleQueryClick.bind(this);
     this.handleTypeChange = this.handleTypeChange.bind(this);
     this.handleNameChange = this.handleNameChange.bind(this);
   }
 
   handleQueryClick() {
-
+    if (this.state.queryName == "subscribeMission") {
+      console.log(this.state.subscribingMissions)
+      const tempSubscribingMissions = this.state.subscribingMissions.slice();
+      tempSubscribingMissions.push("mockrobotcode");
+      this.setState({subscribingMissions: tempSubscribingMissions});
+    }
   }
 
   handleTypeChange(e) {
     this.setState({queryType: e.target.value})
+    this.setState({queryName: null})
   }
 
   handleNameChange(e) {
     this.setState({queryName: e.target.value})
+  }
+
+  getArguments(name) {
+    if (name in argumentDict) {
+      return argumentDict[name]
+    }
+    return []
   }
 
   render() {
@@ -189,10 +223,13 @@ class QueryGenerator extends React.Component {
             {true && <img src="rps-image-logo.jpg" width="400" height="200" opacity="0.2"/>}
           </div>
           <div class="query-input">
-            <QueryInput queryType={this.state.queryType} queryName={this.state.queryName} handleTypeChange={this.handleTypeChange} handleNameChange={this.handleNameChange} onClickHandle={this.handleQueryClick}/>
+            <QueryInput onClick={this.handleQueryClick} queryType={this.state.queryType} queryName={this.state.queryName} getArguments={this.getArguments} handleTypeChange={this.handleTypeChange} handleNameChange={this.handleNameChange}/>
           </div>
         </div>
         <div class="split right">
+          <div class="subscription">
+            <Subscription subscribingMissions={this.state.subscribingMissions}/>
+          </div>
           <div class="query-preview">
             <QueryPreview />
           </div>

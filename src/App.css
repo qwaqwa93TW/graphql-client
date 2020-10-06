@@ -102,6 +102,18 @@ input {
   opacity: 0.8
 }
 
-.query-preview {
+.block {
+  position: relative;
+  display: block;
+  width: 90%;
+  border: none;
+  background-color: #4CAF50;
+  padding: 14px 28px;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+}
 
+.default-select {
+  color: gray
 }
