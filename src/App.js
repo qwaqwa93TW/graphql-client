@@ -55,6 +55,10 @@ const client = new ApolloClient({
   }
 });
 
+const argumentDict = {
+  createMission: ["arg1", "arg2", "arg3"],
+  workspace: ["wo", "rk", "space"]
+}
 class QueryResponse extends React.Component {
   render() {
     return (
@@ -84,6 +88,7 @@ class QueryInput extends React.Component {
     this.handleNameChange = this.handleNameChange.bind(this);
   }
 
+
   handleTypeChange(e) {
     this.setState({queryType: e.target.value})
   }
@@ -92,18 +97,30 @@ class QueryInput extends React.Component {
     this.setState({queryName: e.target.value})
   }
 
+  getArguments(name) {
+    if (name in argumentDict) {
+      return argumentDict[name]
+    }
+    return []
+  }
+
+  renderArgument(name) {
+    return (
+      <li>{name}: <input></input></li>
+    )
+  }
   render() {
     return (
       <div>
-        <li>
         <select onChange={this.handleTypeChange} >
-          <option selected>Select query type</option>
+          <option selected disabled hidden></option>
           <option value="query">Query</option>
           <option value="mutation">Mutation</option>
           <option value="subscription">Subscription</option>
         </select>
         {(this.state.queryType == "query") && 
         <select onChange={this.handleNameChange} >
+          <option selected disabled hidden></option>
           <option value="workspace">Workspace</option>
           <option value="roadmap">Roadmap</option>
           <option value="robot">Robot</option>
@@ -111,6 +128,7 @@ class QueryInput extends React.Component {
         </select>}
         {(this.state.queryType == "mutation") && 
         <select onChange={this.handleNameChange} >
+        <option selected disabled hidden></option>
           <option value="mission">Mission</option>
           <option value="robot">Robot</option>
           <option value="edge">Edge</option>
@@ -118,20 +136,20 @@ class QueryInput extends React.Component {
         </select>}
         {(this.state.queryType == "mutation") && 
         <select onChange={this.handleNameChange} >
-          <option value="create">Create</option>
+        <option selected disabled hidden></option>
+          <option value="createMission">Create</option>
           <option value="update">Update</option>
           <option value="delete">Delete</option>
           <option value="adfs">adf</option>
         </select>}
         {(this.state.queryType == "subscription") && 
         <select onChange={this.handleNameChange} >
+        <option selected disabled hidden></option>
           <option value="subscribeRobot">Robot</option>
           <option value="subscribeMission">Mission</option>
         </select>}
-      </li>
-      <li>
-        
-      </li>
+      <div>Arguments</div>
+      {this.getArguments(this.state.queryName).map(this.renderArgument) }
       </div>
     );
   }
