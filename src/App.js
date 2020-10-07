@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './App.css';
-import Select from 'react-select'
+import Home from './Home'
 
 import {
   gql,
@@ -167,8 +167,8 @@ class QueryInput extends React.Component {
           <option value="subscribeMission">Mission</option>
         </select>}
       <div>Arguments</div>
-      {this.props.getArguments(this.props.queryName).map(this.renderArgument) }
-      <button class="block" onClick={this.props.onClick}>Query!</button>
+      {this.getArguments(this.state.queryName).map(this.renderArgument) }
+      <Home />
       </div>
     );
   }
